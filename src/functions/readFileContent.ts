@@ -1,4 +1,8 @@
 import { drive } from '../google/googleClient.js'
+import { createRequire } from 'module'
+const require = createRequire(import.meta.url)
+const pdfParseModule = require('pdf-parse')
+const PDFParse = pdfParseModule.PDFParse || pdfParseModule.default || pdfParseModule
 
 interface FileContentResult {
   success: boolean
@@ -33,7 +37,6 @@ const BINARY_MIME_TYPES = [
   'image/',
   'video/',
   'audio/',
-  'application/pdf',
   'application/zip',
   'application/x-zip-compressed',
   'application/x-rar-compressed',
@@ -141,6 +144,28 @@ export const readFileContent = async (
         return {
           success: false,
           message: `Cannot convert file to text format: ${errorMessage}. MIME type: ${mimeType}`,
+        }
+      }
+    } else if (mimeType === 'application/pdf') {
+      try {
+        const getRes = await drive.files.get(
+          {
+            fileId,
+            alt: 'media',
+          },
+          {
+            responseType: 'arraybuffer',
+          }
+        )
+
+        const buffer = Buffer.from(getRes.data as ArrayBuffer)
+        const parser = new PDFParse({ data: buffer })
+        const pdfData = await parser.getText()
+        rawContent = pdfData.text
+      } catch (pdfError: any) {
+        return {
+          success: false,
+          message: `Failed to read PDF content: ${pdfError?.message || pdfError}.`,
         }
       }
     } else if (isTextMimeType(mimeType)) {
