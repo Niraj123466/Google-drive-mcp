@@ -80,3 +80,18 @@ Add the following MCP server configuration, adjusting the path to your build out
 Save the file
 
 8. **Restart Claude Desktop**
+
+## Troubleshooting
+
+### Error 403: access_denied - "App has not completed the Google verification process"
+
+If you encounter this error when trying to authenticate, it means your OAuth app is in "Testing" mode and your email address is not added as a test user. To fix this:
+
+1. Go to the [Google Cloud Console OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent)
+2. Scroll down to the **Test users** section
+3. Click **+ ADD USERS**
+4. Add your Google account email address (the one you're using to authenticate)
+5. Click **ADD**
+6. Try running `npm run tokenGenerator` again
+
+**Note:** For personal use, keeping the app in "Testing" mode and adding yourself as a test user is sufficient. If you want to make the app available to others without adding them as test users, you'll need to publish the app, which requires Google's verification process.
