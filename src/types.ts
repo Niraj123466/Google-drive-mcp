@@ -34,3 +34,30 @@ export interface File {
   viewLink?: string | null
   downloadLink?: string | null
 }
+
+// Semantic search types
+export interface SemanticFolderResult {
+  folderId: string
+  name: string
+  path: string
+  score: number
+}
+
+export interface SemanticFileResult {
+  fileId: string
+  name: string
+  folderId: string
+  folderName?: string
+  score: number
+}
+
+export interface SemanticQueryResult {
+  folders: SemanticFolderResult[]
+  files: SemanticFileResult[]
+  content?: Array<{
+    fileId: string
+    fileName: string
+    content: string
+    isTruncated?: boolean
+  }>
+}
